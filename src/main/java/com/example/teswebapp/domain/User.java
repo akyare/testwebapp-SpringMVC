@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -28,36 +25,28 @@ public class User {
     @NotBlank(message = "Name is mandatory")
     private String name;
 
+
+    private String firstName;
+
+
+    private String lastName;
+
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     private String email;
 
     @ValidPassword
+    @Transient
     private String password;
+
+    @Column(name = "password")
+    private String encodedPassword;
 
     @NotNull
     @Size(min = 1)
+    @Transient
     private String confirmPassword;
 
     private Boolean isSomething;
-
-
-//    public void setPassword(String password) {
-//        this.password = password;
-//        checkPassword();
-//    }
-//
-//    public void setConfirmPassword(String confirmPassword) {
-//        this.confirmPassword = confirmPassword;
-//        checkPassword();
-//    }
-//
-//    private void checkPassword() {
-//        if (this.password == null || this.confirmPassword == null) {
-//            return;
-//        } else if (!this.password.equals(confirmPassword)) {
-//            this.confirmPassword = null;
-//        }
-//    }
 
 }

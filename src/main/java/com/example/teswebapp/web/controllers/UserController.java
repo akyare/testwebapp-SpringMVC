@@ -1,7 +1,8 @@
-package com.example.teswebapp.controllers;
+package com.example.teswebapp.web.controllers;
 
 import com.example.teswebapp.domain.User;
 import com.example.teswebapp.repository.UserRepository;
+import com.example.teswebapp.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +20,11 @@ public class UserController {
 
     private final UserRepository userRepository;
 
-    public UserController(UserRepository userRepository) {
+    private final UserService userService;
+
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @GetMapping("/index")
@@ -30,7 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/signup")
-    public String showSignUpForm(User user) {
+    public String showSignUpForm(Model model) {
+        model.addAttribute("user", new User());
+
         return "add-user";
     }
 
@@ -41,7 +47,8 @@ public class UserController {
             return "add-user";
         }
 
-        userRepository.save(user);
+        userService.registerNewUserAccount(user);
+//        userRepository.save(user);
         return "redirect:/index";
     }
 
