@@ -23,6 +23,9 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Name is mandatory")
+    private String username;
+
+    @NotBlank(message = "Name is mandatory")
     private String name;
 
 

@@ -3,6 +3,7 @@ package com.example.teswebapp.web.controllers;
 import com.example.teswebapp.domain.User;
 import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
+import com.example.teswebapp.web.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
@@ -62,8 +64,14 @@ public class UserController {
             return "add-user";
         }
 
-        userService.registerNewUserAccount(user);
-//        userRepository.save(user);
+        try {
+            User registered = userService.registerNewUserAccount(user);
+        } catch (UserAlreadyExistException uaeEx) {
+            model.addAttribute("message", "An account for that username/email already exists.");
+            return "add-user";
+        }
+
+        //userService.registerNewUserAccount(user);
         return "redirect:/index";
     }
 

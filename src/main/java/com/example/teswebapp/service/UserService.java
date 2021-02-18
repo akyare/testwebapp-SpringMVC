@@ -58,6 +58,11 @@ public class UserService implements IUserService {
         if (emailExists(user.getEmail())) {
             throw new UserAlreadyExistException("There is an user with that email address: " + user.getEmail());
         }
+        if (usernameExists(user.getUsername())) {
+            throw new UserAlreadyExistException("There is an user with that username: " + user.getUsername());
+        }
+
+
         //final User user = new User();
 
         //user.setFirstName(user.getFirstName());
@@ -70,12 +75,17 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
-    private boolean emailExists(final String email) {
-        return userRepository.findByEmail(email) != null;
-    }
-
     @Override
     public User findById(Long id){
         return userRepository.findById(id).get();
     }
+
+    private boolean emailExists(final String email) {
+        return userRepository.findByEmail(email) != null;
+    }
+
+    private boolean usernameExists(final String username) {
+        return userRepository.findByUsername(username) != null;
+    }
+
 }
