@@ -73,4 +73,9 @@ public class UserService implements IUserService {
     private boolean emailExists(final String email) {
         return userRepository.findByEmail(email) != null;
     }
+
+    @Override
+    public User findById(Long id){
+        return userRepository.findById(id).get();
+    }
 }

@@ -14,4 +14,6 @@ import com.example.teswebapp.domain.User;
 public interface IUserService {
 
     User registerNewUserAccount(User accountDto) throws UserAlreadyExistException;
+
+    User findById(Long Id);
 }

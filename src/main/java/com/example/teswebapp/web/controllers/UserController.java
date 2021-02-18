@@ -4,6 +4,9 @@ import com.example.teswebapp.domain.User;
 import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +21,9 @@ import javax.validation.Valid;
 @Controller
 public class UserController {
 
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
+
     private final UserRepository userRepository;
 
     private final UserService userService;
@@ -30,6 +36,15 @@ public class UserController {
     @GetMapping("/index")
     public String showUserList(Model model) {
         model.addAttribute("users", userRepository.findAll());
+
+//        User user = userService.findById(20L);
+//        log.info("user.getEncodedPassword(): " + user.getEncodedPassword());
+//        log.info("user.getEmail(): " + user.getEmail());
+//        String encEncodePass = passwordEncoder.encode(user.getEncodedPassword());
+//        log.info("passwordEncoder.encode(user.getEncodedPassword(): " + encEncodePass);
+//        log.info(String.valueOf(passwordEncoder.matches("!nXkTT7C4#DNiU", user.getEncodedPassword())));
+//        log.info(String.valueOf(passwordEncoder.matches("!nXkTT7C4#DNiU", encEncodePass)));
+
         return "index";
     }
 
