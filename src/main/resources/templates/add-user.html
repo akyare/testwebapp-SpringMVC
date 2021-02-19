@@ -17,6 +17,7 @@
         <div class="col-md-6">
 
             <form action="#" th:action="@{/adduser}" th:object="${user}" method="post">
+
                 <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}">
                     <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
                 </div>

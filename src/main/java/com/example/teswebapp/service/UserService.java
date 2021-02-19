@@ -26,6 +26,7 @@ import com.example.teswebapp.domain.User;
 //import com.baeldung.persistence.model.UserLocation;
 //import com.baeldung.persistence.model.VerificationToken;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Service;
 
 //import com.maxmind.geoip2.DatabaseReader;
 
+@Slf4j
 @Service
 @Transactional
 public class UserService implements IUserService {
@@ -48,7 +50,6 @@ public class UserService implements IUserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
 
     // API
 
@@ -76,7 +77,21 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public void updateUserNotPwd(User user) {
+
+        userRepository.updateUserNotPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsSomething());
+    }
+
+    @Override
+    public void updateUserWithPwd(User user) {
+
+        userRepository.updateUserWithPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsSomething(),
+                passwordEncoder.encode(user.getPassword()));
+    }
+
+    @Override
     public User findById(Long id){
+
         return userRepository.findById(id).get();
     }
 

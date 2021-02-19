@@ -5,17 +5,11 @@ import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,14 +17,15 @@ import javax.validation.Valid;
 @Controller
 public class UserController {
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
 
     private final UserService userService;
 
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(PasswordEncoder passwordEncoder, UserRepository userRepository, UserService userService) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.userService = userService;
     }
@@ -77,22 +72,50 @@ public class UserController {
 
     @GetMapping("/edit/{id}")
     public String showUpdateForm(@PathVariable("id") long id, Model model) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+        User user = userService.findById(id);
+
+        // default password and confirmPassword to use in thymeleaf if the password is not changed
+        // reason is to pass the validations (password not null and password matches confirmPassword
+        final String DEFAULT_PWD = "'!nXkTT7C4#DNiU'";
+
         model.addAttribute("user", user);
-        model.addAttribute("password",user.getPassword());
-        model.addAttribute("confirmPassword",user.getConfirmPassword());
+        model.addAttribute("defaultPwd", DEFAULT_PWD);
+
+        //log for debugging, to delete
+        log.info("user: " + user.getUsername() + ", password: " + user.getEncodedPassword());
 
         return "update-user";
     }
 
     @PostMapping("/update/{id}")
-    public String updateUser(@PathVariable("id") long id, @Valid User user, BindingResult result, Model model) {
+    public String updateUser(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
+                             @RequestParam(value = "pwdIsNull", required = false) String pwdIsNull, Model model) {
+
         if (result.hasErrors()) {
-            user.setId(id);
+            //user.setId(id);
+            log.info(result.getFieldErrors().toString());
+            log.info("password: " + user.getPassword());
+            log.info("confirmPassword: " + user.getConfirmPassword());
             return "update-user";
         }
 
-        userRepository.save(user);
+        log.info("value back from thymeleaf: " + pwdIsNull);
+
+        User userDB = userService.findById(id);
+
+        // only logs for debugging, to delete
+        log.info("encodedpassword: " + userDB.getEncodedPassword());
+        if(passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
+            log.info("password matches the DB" );
+        } else {
+            log.info("password do not match the DB");
+        }
+
+        if(!passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
+            userService.updateUserWithPwd(user);
+        } else {
+            userService.updateUserNotPwd(user);
+        }
 
         return "redirect:/index";
     }

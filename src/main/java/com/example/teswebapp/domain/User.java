@@ -2,10 +2,8 @@ package com.example.teswebapp.domain;
 
 import com.example.teswebapp.validation.PasswordMatches;
 import com.example.teswebapp.validation.ValidPassword;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -15,7 +13,11 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @PasswordMatches
+@DynamicUpdate
 public class User {
 
     @Id
