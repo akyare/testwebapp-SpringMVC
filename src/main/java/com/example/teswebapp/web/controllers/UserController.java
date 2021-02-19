@@ -76,7 +76,7 @@ public class UserController {
 
         // default password and confirmPassword to use in thymeleaf if the password is not changed
         // reason is to pass the validations (password not null and password matches confirmPassword
-        final String DEFAULT_PWD = "'!nXkTT7C4#DNiU'";
+        final String DEFAULT_PWD = user.getEncodedPassword().substring(0,20);
 
         model.addAttribute("user", user);
         model.addAttribute("defaultPwd", DEFAULT_PWD);
