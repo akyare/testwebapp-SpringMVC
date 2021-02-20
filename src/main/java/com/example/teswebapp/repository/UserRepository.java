@@ -28,9 +28,9 @@ public interface UserRepository extends CrudRepository<User, Long> {
                     @Param(value = "name") String name, @Param(value = "email") String email,
                     @Param(value = "writer") Boolean writer, @Param(value = "password") String password);
 
-    @Query("select u from User u where u.id = :id and u.email = :email")
-    List<User> findByEmailNotEqualToId(@Param(value = "id") Long id, @Param(value = "email") String email);
+    @Query("select u from User u where u.email = :email and u.id <> :id")
+    List<User> findByEmailNotEqualToId(@Param(value = "email") String email, @Param(value = "id") Long id);
 
-    @Query("select u from User u where u.id = :id and u.username = :username")
-    List<User> findByUsernameNotEqualToId(@Param(value = "id") Long id, @Param(value = "username") String username);
+    @Query("select u from User u where u.username = :username and u.id <> :id")
+    List<User> findByUsernameNotEqualToId(@Param(value = "username") String username,  @Param(value = "id") Long id);
 }

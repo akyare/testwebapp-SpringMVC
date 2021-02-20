@@ -22,5 +22,4 @@ public interface IUserService {
 
     User findById(Long Id);
 
-
 }

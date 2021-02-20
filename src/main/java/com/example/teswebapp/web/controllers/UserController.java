@@ -34,14 +34,6 @@ public class UserController {
     public String showUserList(Model model) {
         model.addAttribute("users", userRepository.findAll());
 
-//        User user = userService.findById(20L);
-//        log.info("user.getEncodedPassword(): " + user.getEncodedPassword());
-//        log.info("user.getEmail(): " + user.getEmail());
-//        String encEncodePass = passwordEncoder.encode(user.getEncodedPassword());
-//        log.info("passwordEncoder.encode(user.getEncodedPassword(): " + encEncodePass);
-//        log.info(String.valueOf(passwordEncoder.matches("!nXkTT7C4#DNiU", user.getEncodedPassword())));
-//        log.info(String.valueOf(passwordEncoder.matches("!nXkTT7C4#DNiU", encEncodePass)));
-
         return "index";
     }
 
@@ -60,13 +52,12 @@ public class UserController {
         }
 
         try {
-            User registered = userService.registerNewUserAccount(user);
+            userService.registerNewUserAccount(user);
         } catch (UserAlreadyExistException uaeEx) {
             model.addAttribute("message", "An account for that username/email already exists.");
             return "add-user";
         }
 
-        //userService.registerNewUserAccount(user);
         return "redirect:/index";
     }
 
@@ -91,10 +82,6 @@ public class UserController {
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
                              @RequestParam(value = "pwdIsNull", required = false) String pwdIsNull, Model model) {
-        User userDB = userService.findById(id);
-
-        log.warn("user has the following pwd: " + user.getPassword());
-        log.warn("user has the following confirmpwd: " + user.getConfirmPassword());
 
         if (result.hasErrors()) {
             log.debug("Error in bindingResult!!!");
@@ -107,21 +94,6 @@ public class UserController {
             model.addAttribute("message", "An account for that username/email already exists.");
             return "update-user";
         }
-
-
-        // only logs for debugging, to delete
-        log.info("encodedpassword: " + userDB.getEncodedPassword());
-//        if(passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
-//            log.info("password matches the DB" );
-//        } else {
-//            log.info("password do not match the DB");
-//        }
-
-//        if(!passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
-//            userService.updateUserWithPwd(user);
-//        } else {
-//            userService.updateUserNotPwd(user);
-//        }
 
         return "redirect:/index";
     }

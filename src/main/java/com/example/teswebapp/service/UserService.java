@@ -71,10 +71,10 @@ public class UserService implements IUserService {
     @Override
     public void updateUserNotPwd(User user) {
 
-        if (emailExistsForId(user.getId(), user.getEmail())) {
+        if (emailExistsForId(user.getEmail(),user.getId())) {
             throw new UserAlreadyExistException("There is an user with that email address: " + user.getEmail());
         }
-        if (usernameExistsForId(user.getId(),user.getUsername())) {
+        if (usernameExistsForId(user.getUsername(), user.getId())) {
             throw new UserAlreadyExistException("There is an user with that username: " + user.getUsername());
         }
 
@@ -103,13 +103,13 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username) != null;
     }
 
-    private boolean emailExistsForId(final Long id, final String email) {
-        int sizeUsers = userRepository.findByEmailNotEqualToId(id, email).size();
+    private boolean emailExistsForId(final String email, final Long id) {
+        int sizeUsers = userRepository.findByEmailNotEqualToId(email, id).size();
         return  sizeUsers > 0;
     }
 
-    private boolean usernameExistsForId(final Long id, final String username) {
-        int sizeUsers = userRepository.findByUsernameNotEqualToId(id,username).size();
+    private boolean usernameExistsForId(final String username, final Long id) {
+        int sizeUsers = userRepository.findByUsernameNotEqualToId(username, id).size();
         return  sizeUsers > 0;
     }
 
