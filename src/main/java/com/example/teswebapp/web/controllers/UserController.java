@@ -74,15 +74,16 @@ public class UserController {
     public String showUpdateForm(@PathVariable("id") long id, Model model) {
         User user = userService.findById(id);
 
+
         // default password and confirmPassword to use in thymeleaf if the password is not changed
         // reason is to pass the validations (password not null and password matches confirmPassword
         final String DEFAULT_PWD = user.getEncodedPassword().substring(0,20);
 
-        model.addAttribute("user", user);
-        model.addAttribute("defaultPwd", DEFAULT_PWD);
+        user.setPassword(DEFAULT_PWD);
+        user.setConfirmPassword(DEFAULT_PWD);
 
-        //log for debugging, to delete
-        log.info("user: " + user.getUsername() + ", password: " + user.getEncodedPassword());
+        model.addAttribute("user", user);
+
 
         return "update-user";
     }
@@ -90,32 +91,37 @@ public class UserController {
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
                              @RequestParam(value = "pwdIsNull", required = false) String pwdIsNull, Model model) {
+        User userDB = userService.findById(id);
+
+        log.warn("user has the following pwd: " + user.getPassword());
+        log.warn("user has the following confirmpwd: " + user.getConfirmPassword());
 
         if (result.hasErrors()) {
-            //user.setId(id);
-            log.info(result.getFieldErrors().toString());
-            log.info("password: " + user.getPassword());
-            log.info("confirmPassword: " + user.getConfirmPassword());
+            log.debug("Error in bindingResult!!!");
             return "update-user";
         }
 
-        log.info("value back from thymeleaf: " + pwdIsNull);
+        try {
+            userService.updateUserNotPwd(user);
+        } catch (UserAlreadyExistException uaeEx) {
+            model.addAttribute("message", "An account for that username/email already exists.");
+            return "update-user";
+        }
 
-        User userDB = userService.findById(id);
 
         // only logs for debugging, to delete
         log.info("encodedpassword: " + userDB.getEncodedPassword());
-        if(passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
-            log.info("password matches the DB" );
-        } else {
-            log.info("password do not match the DB");
-        }
+//        if(passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
+//            log.info("password matches the DB" );
+//        } else {
+//            log.info("password do not match the DB");
+//        }
 
-        if(!passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
-            userService.updateUserWithPwd(user);
-        } else {
-            userService.updateUserNotPwd(user);
-        }
+//        if(!passwordEncoder.matches(user.getPassword(),userDB.getEncodedPassword())) {
+//            userService.updateUserWithPwd(user);
+//        } else {
+//            userService.updateUserNotPwd(user);
+//        }
 
         return "redirect:/index";
     }

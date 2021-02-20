@@ -27,4 +27,10 @@ public interface UserRepository extends CrudRepository<User, Long> {
     void updateUserWithPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
                     @Param(value = "name") String name, @Param(value = "email") String email,
                     @Param(value = "writer") Boolean writer, @Param(value = "password") String password);
+
+    @Query("select u from User u where u.id = :id and u.email = :email")
+    List<User> findByEmailNotEqualToId(@Param(value = "id") Long id, @Param(value = "email") String email);
+
+    @Query("select u from User u where u.id = :id and u.username = :username")
+    List<User> findByUsernameNotEqualToId(@Param(value = "id") Long id, @Param(value = "username") String username);
 }

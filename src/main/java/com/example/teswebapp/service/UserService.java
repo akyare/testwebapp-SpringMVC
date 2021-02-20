@@ -63,21 +63,20 @@ public class UserService implements IUserService {
             throw new UserAlreadyExistException("There is an user with that username: " + user.getUsername());
         }
 
-
-        //final User user = new User();
-
-        //user.setFirstName(user.getFirstName());
-        //user.setLastName(user.getLastName());
         user.setEncodedPassword(passwordEncoder.encode(user.getPassword()));
-        //user.setConfirmPassword(user.getConfirmPassword());
-        //user.setEmail(user.getEmail());
-        //user.setUsing2FA(user.isUsing2FA());
-        //user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
+
         return userRepository.save(user);
     }
 
     @Override
     public void updateUserNotPwd(User user) {
+
+        if (emailExistsForId(user.getId(), user.getEmail())) {
+            throw new UserAlreadyExistException("There is an user with that email address: " + user.getEmail());
+        }
+        if (usernameExistsForId(user.getId(),user.getUsername())) {
+            throw new UserAlreadyExistException("There is an user with that username: " + user.getUsername());
+        }
 
         userRepository.updateUserNotPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsSomething());
     }
@@ -95,12 +94,23 @@ public class UserService implements IUserService {
         return userRepository.findById(id).get();
     }
 
+
     private boolean emailExists(final String email) {
         return userRepository.findByEmail(email) != null;
     }
 
     private boolean usernameExists(final String username) {
         return userRepository.findByUsername(username) != null;
+    }
+
+    private boolean emailExistsForId(final Long id, final String email) {
+        int sizeUsers = userRepository.findByEmailNotEqualToId(id, email).size();
+        return  sizeUsers > 0;
+    }
+
+    private boolean usernameExistsForId(final Long id, final String username) {
+        int sizeUsers = userRepository.findByUsernameNotEqualToId(id,username).size();
+        return  sizeUsers > 0;
     }
 
 }
