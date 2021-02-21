@@ -11,14 +11,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
+//Spring security needs a table authorities with properties: username, authority
+//Spring security needs a table users with properties: username, password, enabled
+@Entity(name="User")
+@Table(name="users")//Spring security needs a tables: authorities and users. Names of tables should be authorities and users.
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @PasswordMatches
 @DynamicUpdate
-@Table(name="users")
 public class User {
 
     @Id

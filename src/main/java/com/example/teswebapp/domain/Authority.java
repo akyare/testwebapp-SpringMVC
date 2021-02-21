@@ -10,12 +10,15 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-@Entity
+
+//Spring security needs a table authorities with properties: username, authority
+//Spring security needs a table users with properties: username, password, enabled
+@Entity(name="Authority")
+@Table(name="authorities")//Spring security needs a tables: authorities and users. Names of tables should be authorities and users.
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="authorities")
 public class Authority {
 
     @Id
@@ -26,7 +29,7 @@ public class Authority {
     private String username;
 
     @OneToOne
-    @PrimaryKeyJoinColumn(name = "username")
+    @JoinColumn(name = "username", insertable=false, updatable=false)
     private User user;
 
     @NotBlank(message = "Authority is mandatory")
