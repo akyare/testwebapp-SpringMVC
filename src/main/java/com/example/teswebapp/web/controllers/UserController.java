@@ -1,6 +1,7 @@
 package com.example.teswebapp.web.controllers;
 
 import com.example.teswebapp.domain.User;
+import com.example.teswebapp.password.RandomPasswordGenerator;
 import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
@@ -66,15 +67,14 @@ public class UserController {
         User user = userService.findById(id);
 
 
-        // default password and confirmPassword to use in thymeleaf if the password is not changed
-        // reason is to pass the validations (password not null and password matches confirmPassword
-        final String DEFAULT_PWD = user.getEncodedPassword().substring(0,20);
-
+        // DEFAULT_PWD set to password and confirmPassword and used in thymeleaf if the password is not changed
+        // reason is to pass the validations (password not null and password matches confirmPassword)
+        RandomPasswordGenerator passGen = new RandomPasswordGenerator();
+        final String DEFAULT_PWD = passGen.generatePassayPassword();
         user.setPassword(DEFAULT_PWD);
         user.setConfirmPassword(DEFAULT_PWD);
 
         model.addAttribute("user", user);
-
 
         return "update-user";
     }
@@ -82,6 +82,9 @@ public class UserController {
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
                              @RequestParam(value = "pwdIsNull", required = false) String pwdIsNull, Model model) {
+
+        log.warn("password: " + user.getPassword());
+        log.warn("confirmpwd: " + user.getConfirmPassword());
 
         if (result.hasErrors()) {
             log.debug("Error in bindingResult!!!");
