@@ -19,6 +19,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
         import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
+import javax.sql.DataSource;
+
 //import com.maxmind.geoip2.DatabaseReader;
 //import com.maxmind.geoip2.exception.GeoIp2Exception;
 
@@ -31,13 +33,19 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    private DataSource dataSource;
+
+    @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user1").password(encoder().encode("user1Pass")).roles("USER")
-                .and()
-                .withUser("user2").password(encoder().encode("user2Pass")).roles("USER")
-                .and()
-                .withUser("admin").password(encoder().encode("adminPass")).roles("ADMIN");
+        auth.jdbcAuthentication()
+                .dataSource(dataSource);
+
+//        auth.inMemoryAuthentication()
+//                .withUser("user1").password(encoder().encode("user1Pass")).roles("USER")
+//                .and()
+//                .withUser("user2").password(encoder().encode("user2Pass")).roles("USER")
+//                .and()
+//                .withUser("admin").password(encoder().encode("adminPass")).roles("ADMIN");
     }
 
     @Override
@@ -48,7 +56,8 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
         security
                 .authorizeRequests()
-                .antMatchers("/", "/home").permitAll()
+                .antMatchers("/", "/index", "/signup","/adduser",
+                        "/login","/webjars/**","/css/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

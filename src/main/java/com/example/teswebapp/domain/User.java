@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @PasswordMatches
 @DynamicUpdate
+@Table(name="users")
 public class User {
 
     @Id
@@ -26,6 +27,9 @@ public class User {
 
     @NotBlank(message = "Name is mandatory")
     private String username;
+
+    @OneToOne(mappedBy = "user")
+    private Authority authority;
 
     @NotBlank(message = "Name is mandatory")
     private String name;
