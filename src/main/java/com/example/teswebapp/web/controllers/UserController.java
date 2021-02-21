@@ -31,8 +31,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/index")
+    @GetMapping({"/","/index"})
     public String showUserList(Model model) {
+
         model.addAttribute("users", userRepository.findAll());
 
         return "index";
