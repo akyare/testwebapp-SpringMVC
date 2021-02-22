@@ -6,6 +6,8 @@ import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +35,10 @@ public class UserController {
 
     @GetMapping({"/","/index"})
     public String showUserList(Model model) {
+        // Add all null check and authentication check before using. Because this is global
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("loggedinuser", authentication.getName());
+        model.addAttribute("roles", authentication.getAuthorities());
 
         model.addAttribute("users", userRepository.findAll());
 

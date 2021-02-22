@@ -5,8 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/shards.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/login.css" th:href="@{./css/login.css}">
 </head>
@@ -18,14 +20,14 @@
 
         <!-- Icon -->
         <div class="fadeIn first">
-            <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon" />
+            <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon"/>
         </div>
 
         <!-- Login Form -->
-        <form th:action="@{/login}" method='POST'   >
-            <input type="text" id="login" class="fadeIn second" name="username" placeholder="username">
+        <form name="form1" th:action="@{/login}" method='POST'>
+            <input type="text" id="username" class="fadeIn second" name="username" placeholder="username">
             <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
-            <input type="submit" class="fadeIn fourth" value="Log In">
+            <input type="submit" class="fadeIn fourth" value="Log In"   >
         </form>
 
         <!-- Remind Passowrd -->
@@ -34,6 +36,34 @@
         </div>
 
     </div>
+    <script type="text/javascript">
+//         if ($('#remember').attr('checked')) {
+//             var username = $('#username').attr("value");
+//             var password = $('#password').attr("value");
+// // set cookies to expire in 14 days
+//             $.cookie('username', username, { expires: 14 });
+//             $.cookie('password', password, { expires: 14 });
+//             $.cookie('remember', true, { expires: 14 });
+//         } else {
+// // reset cookies
+//             $.cookie('username', null);
+//             $.cookie('password', null);
+//             $.cookie('remember', null);
+//         }
+
+        // expireAt = new Date;<!--  www  .  j  av  a  2  s  .  c  o m-->
+        // expireAt.setMonth(expireAt.getMonth() + 3);
+        // username = "";
+        //
+        // function makeCookie()
+        // {
+        //     var remember = $.cookie('remember-me');
+        //     if ( remember == 'true' ) {
+        //         username = document.form1.username.value;
+        //         document.cookie = "name=" + username + ";expires=" + expireAt.toGMTString();
+        //     }
+        // }
+    </script>
 
 </div>
 
