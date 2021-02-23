@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface IUserService {
 
+
     User registerNewUserAccount(User account) throws UserAlreadyExistException;
 
     void updateUserNotPwd(User user);
@@ -21,5 +22,7 @@ public interface IUserService {
     void updateUserWithPwd(User user);
 
     User findById(Long Id);
+
+    void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
 
 }

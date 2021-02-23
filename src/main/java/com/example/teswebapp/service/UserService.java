@@ -89,9 +89,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User findById(Long id){
+    public void updateUserPwd(Long id, String password) {
+        userRepository.updateUserPwd(id, passwordEncoder.encode(password));
+    }
 
-        return userRepository.findById(id).get();
+    public boolean checkIfValidOldPassword(User user, String oldPassword) {
+
+        return passwordEncoder.matches(oldPassword,user.getEncodedPassword());
     }
 
 
@@ -111,6 +115,12 @@ public class UserService implements IUserService {
     private boolean usernameExistsForId(final String username, final Long id) {
         int sizeUsers = userRepository.findByUsernameNotEqualToId(username, id).size();
         return  sizeUsers > 0;
+    }
+
+    @Override
+    public User findById(Long id){
+
+        return userRepository.findById(id).get();
     }
 
 }

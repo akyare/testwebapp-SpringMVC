@@ -52,8 +52,9 @@
                 </div>
 
                     <div class="row">
-                        <div class="col-md-6 mt-5">
+                        <div class="col-md">
                             <input type="submit" class="btn btn-primary" value="Update User">
+                            <a th:href="@{'/edit pwd/' +'' + ${id}}" class="btn btn-primary">Change password</a>
                         </div>
                     </div>
             </form>

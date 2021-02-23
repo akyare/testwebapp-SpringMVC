@@ -8,10 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
     List<User> findAll();
+
+    Optional<User> findById(Long id);
 
     User findByEmail(String email);
     User findByUsername(String username);
@@ -29,6 +32,10 @@ public interface UserRepository extends CrudRepository<User, Long> {
     void updateUserWithPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
                     @Param(value = "name") String name, @Param(value = "email") String email,
                     @Param(value = "writer") Boolean writer, @Param(value = "password") String password);
+
+    @Modifying
+    @Query("update User u set u.encodedPassword = :password where u.id = :id")
+    void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
 
     @Query("select u from User u where u.email = :email and u.id <> :id")
     List<User> findByEmailNotEqualToId(@Param(value = "email") String email, @Param(value = "id") Long id);

@@ -4,7 +4,9 @@ import com.example.teswebapp.domain.User;
 import com.example.teswebapp.password.RandomPasswordGenerator;
 import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
+import com.example.teswebapp.web.error.InvalidOldPasswordException;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -94,13 +98,15 @@ public class UserController {
         user.setConfirmPassword(DEFAULT_PWD);
 
         model.addAttribute("user", user);
+        model.addAttribute("defaultPwd", DEFAULT_PWD);
+        log.warn("the generated default pwd: " + DEFAULT_PWD);
 
         return "update-user";
     }
 
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
-                             @RequestParam(value = "pwdIsNull", required = false) String pwdIsNull, Model model) {
+                             Model model) {
 
         log.warn("password: " + user.getPassword());
         log.warn("confirmpwd: " + user.getConfirmPassword());
@@ -120,6 +126,48 @@ public class UserController {
         return "redirect:/index";
     }
 
+    @GetMapping("/edit pwd/{id}")
+    public String getUpdatePwd(@PathVariable("id") long id, Model model) {
+
+        model.addAttribute("user", userService.findById(id));
+
+        return "update-pwd";
+    }
+
+    @PostMapping("/update pwd/{id}")
+    public String postUpdatePwd(@PathVariable("id") long id,@ModelAttribute @Valid User user, BindingResult result,
+                                Model model) {
+
+        log.warn("pwd from postUpdatePwd: " + user.getPassword());
+        log.warn("oldPwd from postUpdatePwd: " + user.getOldPassword());
+        log.warn("confirmPwd from postUpdatePwd: " + user.getConfirmPassword());
+
+        if (result.hasErrors()) {
+            result.getAllErrors().forEach(objectError -> log.warn(objectError.toString()));
+            return "update-pwd";
+        }
+
+
+        User userDb = userService.findById(id);
+
+        boolean isOldPwdOk = passwordEncoder.matches(user.getOldPassword(), userDb.getEncodedPassword());
+        log.warn("is old pwd ok: " + isOldPwdOk);
+
+        if (!userService.checkIfValidOldPassword(userDb, user.getOldPassword())) {
+            log.warn("the old password is not correct.");
+            model.addAttribute("messageInvalidOldPwd", "The old password is invalid.");
+            return "update-pwd";
+        }
+
+        log.warn("validation on old password is ok.");
+
+        userService.updateUserPwd(id, user.getPassword());
+
+        return "update-pwd";
+    }
+
+
+
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") long id, Model model) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
@@ -127,4 +175,6 @@ public class UserController {
 
         return "redirect:/index";
     }
+
+
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Password</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/shards.min.css">
+</head>
+<body>
+
+<h1>Update Pwd</h1>
+<div class="container my-5">
+    <form action="#" th:action="@{/update pwd/{id}(id=${id})}" th:object="${user}" method="post">
+
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}">
+            <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
+        </div>
+        <div class="alert alert-danger" th:if="${messageInvalidOldPwd!=null}">
+            <p  th:text="${messageInvalidOldPwd}"></p>
+        </div>
+
+        <input type="hidden" th:field="${user.name}" readonly="readonly"/>
+        <input type="hidden" th:field="${user.username}" readonly="readonly"/>
+        <input type="hidden" th:field="${user.email}" readonly="readonly"/>
+
+        <div class="form-group col-md-6">
+            <label for="oldpwd" class="col-form-label">Old Password</label>
+            <input type="password" th:field="${user.oldPassword}" class="form-control" id="oldpwd"
+                   placeholder="Old Password">
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="pwd" class="col-form-label">Password</label>
+            <input type="password" th:field="${user.password}" class="form-control" id="pwd" placeholder="Password">
+            <span th:if="${#fields.hasErrors('password')}" th:errors="${user.password}" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="confirmPwd" class="col-form-label">Confirm Password</label>
+            <input type="password" th:field="${user.confirmPassword}" class="form-control" id="confirmPwd"
+                   placeholder="Confirm Password">
+            <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="${user.confirmPassword}"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mt-5">
+                <input type="submit" class="btn btn-primary" value="Update User">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -58,6 +58,9 @@ public class User {
     @Transient
     private String confirmPassword;
 
+    @Transient
+    private String oldPassword;
+
     private Boolean isSomething;
 
 }
