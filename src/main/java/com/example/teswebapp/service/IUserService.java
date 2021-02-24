@@ -23,6 +23,8 @@ public interface IUserService {
 
     User findById(Long Id);
 
-    void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
+    void updateUserPwd(Long id, String password);
+
+    boolean checkIfValidOldPassword(User user, String oldPassword);
 
 }

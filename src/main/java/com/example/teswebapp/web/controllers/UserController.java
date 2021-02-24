@@ -163,7 +163,7 @@ public class UserController {
 
         userService.updateUserPwd(id, user.getPassword());
 
-        return "update-pwd";
+        return "redirect:/index";
     }
 
 
