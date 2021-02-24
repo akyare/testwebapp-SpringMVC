@@ -36,12 +36,6 @@ public class User {
     @NotBlank(message = "Name is mandatory")
     private String name;
 
-
-    private String firstName;
-
-
-    private String lastName;
-
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     private String email;
@@ -61,6 +55,6 @@ public class User {
     @Transient
     private String oldPassword;
 
-    private Boolean isSomething;
+    private Boolean isWriter;
 
 }

@@ -78,13 +78,13 @@ public class UserService implements IUserService {
             throw new UserAlreadyExistException("There is an user with that username: " + user.getUsername());
         }
 
-        userRepository.updateUserNotPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsSomething());
+        userRepository.updateUserNotPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsWriter());
     }
 
     @Override
     public void updateUserWithPwd(User user) {
 
-        userRepository.updateUserWithPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsSomething(),
+        userRepository.updateUserWithPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsWriter(),
                 passwordEncoder.encode(user.getPassword()));
     }
 

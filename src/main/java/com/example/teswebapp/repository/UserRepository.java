@@ -22,13 +22,13 @@ public interface UserRepository extends CrudRepository<User, Long> {
     List<User> findByName(String name);
 
     @Modifying
-    @Query("update User u set u.username = :username, u.name = :name, u.email = :email, u.isSomething = :writer where u.id = :id")
+    @Query("update User u set u.username = :username, u.name = :name, u.email = :email, u.isWriter = :writer where u.id = :id")
     void updateUserNotPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
                      @Param(value = "name") String name, @Param(value = "email") String email,
                      @Param(value = "writer") Boolean writer);
 
     @Modifying
-    @Query("update User u set u.username = :username, u.name = :name, u.email = :email, u.isSomething = :writer, u.encodedPassword = :password where u.id = :id")
+    @Query("update User u set u.username = :username, u.name = :name, u.email = :email, u.isWriter = :writer, u.encodedPassword = :password where u.id = :id")
     void updateUserWithPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
                     @Param(value = "name") String name, @Param(value = "email") String email,
                     @Param(value = "writer") Boolean writer, @Param(value = "password") String password);
