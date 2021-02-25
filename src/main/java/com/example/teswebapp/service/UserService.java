@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 
 //import com.baeldung.persistence.dao.NewLocationTokenRepository;
 //import com.baeldung.persistence.dao.PasswordResetTokenRepository;
+import com.example.teswebapp.repository.AuthRepository;
 import com.example.teswebapp.repository.UserRepository;
 //import com.baeldung.persistence.dao.UserLocationRepository;
 //import com.baeldung.persistence.dao.UserRepository;
@@ -47,6 +48,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthRepository authRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -123,4 +127,9 @@ public class UserService implements IUserService {
         return userRepository.findById(id).get();
     }
 
+    public void deleteByUsername(String username) {
+
+        authRepository.deleteAllByUsername(username);
+        userRepository.deleteByUsername(username);
+    }
 }

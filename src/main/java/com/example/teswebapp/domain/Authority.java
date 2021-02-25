@@ -28,7 +28,7 @@ public class Authority {
     @NotBlank(message = "Name is mandatory")
     private String username;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "username", insertable=false, updatable=false)
     private User user;
 

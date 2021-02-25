@@ -14,8 +14,12 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
         import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-        import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
         import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
         import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -38,7 +42,14 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
-                .dataSource(dataSource);
+                .dataSource(dataSource)
+//                .usersByUsernameQuery("select username,password,enabled "
+//                + "from users "
+//                + "where username = ?")
+//                .authoritiesByUsernameQuery("select username,authority "
+//                        + "from authorities "
+//                        + "where username = ?")
+        ;
 
 //        auth.inMemoryAuthentication()
 //                .withUser("user1").password(encoder().encode("user1Pass")).roles("USER")
@@ -56,9 +67,15 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
         security
                 .authorizeRequests()
-                .antMatchers("/", "/index", "/signup","/adduser",
-                        "/login","/update/**","/edit/**","/update pwd/**","/edit pwd/**","/delete/**",
-                        "/webjars/**","/css/**").permitAll()
+
+                .antMatchers("/webjars/**","/css/**","/", "/index").permitAll()
+                .antMatchers("/delete/**").hasAnyAuthority("ADMIN")
+
+//                .antMatchers("/", "/index", "/signup","/adduser",
+//                        "/login","/update/**","/edit/**","/update pwd/**","/edit pwd/**","/delete/**",
+//                        "/webjars/**","/css/**").permitAll()
+
+
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -91,6 +108,19 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .deleteCookies("JSESSIONID")
 //                .logoutSuccessHandler(logoutSuccessHandler());
     }
+
+//    @Bean
+//    @Override
+//    public UserDetailsService userDetailsService() {
+//        UserDetails user =
+//                User.withDefaultPasswordEncoder()
+//                        .username("user")
+//                        .password("password")
+//                        .roles("USER")
+//                        .build();
+//
+//        return new InMemoryUserDetailsManager(user);
+//    }
 
     @Bean
     public PasswordEncoder encoder() {

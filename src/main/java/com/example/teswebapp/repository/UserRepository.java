@@ -1,5 +1,6 @@
 package com.example.teswebapp.repository;
 
+import com.example.teswebapp.domain.Authority;
 import com.example.teswebapp.domain.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
+
+    void deleteByUsername(String Username);
+
     List<User> findAll();
 
     Optional<User> findById(Long id);

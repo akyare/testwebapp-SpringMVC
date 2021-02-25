@@ -21,7 +21,11 @@ create table if not exists authorities
         primary key,
     authority varchar(255) null,
     username varchar(255) null,
-    constraint ix_auth_username
+    constraint unique_index
+        unique (username, authority),
+    constraint authorities_users_username_fk
         foreign key (username) references users (username)
 );
+
+
 

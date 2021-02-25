@@ -27,4 +27,6 @@ public interface IUserService {
 
     boolean checkIfValidOldPassword(User user, String oldPassword);
 
+    void deleteByUsername(String username);
+
 }
