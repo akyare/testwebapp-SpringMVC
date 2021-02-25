@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,9 +87,15 @@ public class UserController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable("id") long id, Model model) {
+    public String showUpdateForm(@PathVariable("id") long id, Principal principal, Model model) {
         User user = userService.findById(id);
 
+        log.warn(principal.getName());
+
+        // The user should only access his own data, otherwise redirect to another page
+        if(!principal.getName().equals(user.getUsername())) {
+            return "redirect:/index";
+        }
 
         // DEFAULT_PWD set to password and confirmPassword and used in thymeleaf if the password is not changed
         // reason is to pass the validations (password not null and password matches confirmPassword)
@@ -106,7 +113,15 @@ public class UserController {
 
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
-                             Model model) {
+                             Principal principal,Model model) {
+
+        log.warn(principal.getName());
+
+        // The user should only access his own data, otherwise redirect to another page
+        if(!principal.getName().equals(user.getUsername())) {
+            return "redirect:/index";
+        }
+
 
         log.warn("password: " + user.getPassword());
         log.warn("confirmpwd: " + user.getConfirmPassword());
@@ -127,16 +142,33 @@ public class UserController {
     }
 
     @GetMapping("/edit pwd/{id}")
-    public String getUpdatePwd(@PathVariable("id") long id, Model model) {
+    public String getUpdatePwd(@PathVariable("id") long id,Principal principal ,Model model) {
+        User user = userService.findById(id);
 
-        model.addAttribute("user", userService.findById(id));
+        log.warn(principal.getName());
+
+        // The user should only access his own data, otherwise redirect to another page
+        if(!principal.getName().equals(user.getUsername())) {
+            return "redirect:/index";
+        }
+
+        model.addAttribute("user", user);
 
         return "update-pwd";
     }
 
     @PostMapping("/update pwd/{id}")
     public String postUpdatePwd(@PathVariable("id") long id,@ModelAttribute @Valid User user, BindingResult result,
-                                Model model) {
+                                Principal principal,Model model) {
+
+
+        log.warn(principal.getName());
+
+        // The user should only access his own data, otherwise redirect to another page
+        if(!principal.getName().equals(user.getUsername())) {
+            return "redirect:/index";
+        }
+
 
         log.warn("pwd from postUpdatePwd: " + user.getPassword());
         log.warn("oldPwd from postUpdatePwd: " + user.getOldPassword());
