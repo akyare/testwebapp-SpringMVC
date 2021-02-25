@@ -41,6 +41,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping({"/forbidden-page"})
+    public String showForbiddenPage(Model model) {
+
+        return "forbidden-page";
+    }
+
     @GetMapping({"/","/index"})
     public String showUserList(Model model) {
         // Add all null check and authentication check before using. Because this is global
@@ -94,7 +100,7 @@ public class UserController {
 
         // The user should only access his own data, otherwise redirect to another page
         if(!principal.getName().equals(user.getUsername())) {
-            return "redirect:/index";
+            return "redirect:/forbidden-page";
         }
 
         // DEFAULT_PWD set to password and confirmPassword and used in thymeleaf if the password is not changed
@@ -119,7 +125,7 @@ public class UserController {
 
         // The user should only access his own data, otherwise redirect to another page
         if(!principal.getName().equals(user.getUsername())) {
-            return "redirect:/index";
+            return "redirect:/forbidden-page";
         }
 
 
@@ -149,7 +155,7 @@ public class UserController {
 
         // The user should only access his own data, otherwise redirect to another page
         if(!principal.getName().equals(user.getUsername())) {
-            return "redirect:/index";
+            return "redirect:/forbidden-page";
         }
 
         model.addAttribute("user", user);
@@ -166,7 +172,7 @@ public class UserController {
 
         // The user should only access his own data, otherwise redirect to another page
         if(!principal.getName().equals(user.getUsername())) {
-            return "redirect:/index";
+            return "redirect:/forbidden-page";
         }
 
 
