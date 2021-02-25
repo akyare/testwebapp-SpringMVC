@@ -47,11 +47,25 @@ public class UserController {
         return "forbidden-page";
     }
 
-    @GetMapping({"/","/index"})
+    @GetMapping({"/", "/index"})
     public String showUserList(Model model) {
         // Add all null check and authentication check before using. Because this is global
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("loggedinuser", authentication.getName());
+
+        User user = userService.findByUsername(authentication.getName());
+
+        String msgUsername = "visitor";
+        String idUser = "";
+        if (user != null) {
+            log.warn("from showUserList username: " + user.getUsername());
+            msgUsername = user.getUsername();
+            idUser = user.getId().toString();
+        }
+
+        model.addAttribute("msgUsername", msgUsername);
+        model.addAttribute("idUser", idUser);
+
+        //model.addAttribute("loggedinuser", authentication.getName());
         model.addAttribute("roles", authentication.getAuthorities());
 
         model.addAttribute("users", userRepository.findAll());
@@ -59,10 +73,10 @@ public class UserController {
         return "index";
     }
 
-    @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
+        if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return "redirect:/index"; //You can redirect wherever you want, but generally it's a good practice to show login screen again.
@@ -99,7 +113,7 @@ public class UserController {
         log.warn(principal.getName());
 
         // The user should only access his own data, otherwise redirect to another page
-        if(!principal.getName().equals(user.getUsername())) {
+        if (!principal.getName().equals(user.getUsername())) {
             return "redirect:/forbidden-page";
         }
 
@@ -119,12 +133,12 @@ public class UserController {
 
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
-                             Principal principal,Model model) {
+                             Principal principal, Model model) {
 
         log.warn(principal.getName());
 
         // The user should only access his own data, otherwise redirect to another page
-        if(!principal.getName().equals(user.getUsername())) {
+        if (!principal.getName().equals(user.getUsername())) {
             return "redirect:/forbidden-page";
         }
 
@@ -148,13 +162,13 @@ public class UserController {
     }
 
     @GetMapping("/edit pwd/{id}")
-    public String getUpdatePwd(@PathVariable("id") long id,Principal principal ,Model model) {
+    public String getUpdatePwd(@PathVariable("id") long id, Principal principal, Model model) {
         User user = userService.findById(id);
 
         log.warn(principal.getName());
 
         // The user should only access his own data, otherwise redirect to another page
-        if(!principal.getName().equals(user.getUsername())) {
+        if (!principal.getName().equals(user.getUsername())) {
             return "redirect:/forbidden-page";
         }
 
@@ -164,14 +178,14 @@ public class UserController {
     }
 
     @PostMapping("/update pwd/{id}")
-    public String postUpdatePwd(@PathVariable("id") long id,@ModelAttribute @Valid User user, BindingResult result,
-                                Principal principal,Model model) {
+    public String postUpdatePwd(@PathVariable("id") long id, @ModelAttribute @Valid User user, BindingResult result,
+                                Principal principal, Model model) {
 
 
         log.warn(principal.getName());
 
         // The user should only access his own data, otherwise redirect to another page
-        if(!principal.getName().equals(user.getUsername())) {
+        if (!principal.getName().equals(user.getUsername())) {
             return "redirect:/forbidden-page";
         }
 
@@ -203,7 +217,6 @@ public class UserController {
 
         return "redirect:/index";
     }
-
 
 
     @GetMapping("/delete/{id}")

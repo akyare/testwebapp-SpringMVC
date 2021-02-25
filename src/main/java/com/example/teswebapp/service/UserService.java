@@ -127,6 +127,11 @@ public class UserService implements IUserService {
         return userRepository.findById(id).get();
     }
 
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public void deleteByUsername(String username) {
 
         authRepository.deleteAllByUsername(username);
