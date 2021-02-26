@@ -4,9 +4,7 @@ import com.example.teswebapp.domain.User;
 import com.example.teswebapp.password.RandomPasswordGenerator;
 import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
-import com.example.teswebapp.web.error.InvalidOldPasswordException;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,8 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -220,12 +216,33 @@ public class UserController {
 
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") long id, Model model) {
+    public String deleteUser(@PathVariable("id") long id, Principal principal, Model model) {
         User user = userService.findById(id);
+
+        log.warn(principal.getName());
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (!principal.getName().equals(user.getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+
         userService.deleteByUsername(user.getUsername());
 
         return "redirect:/index";
     }
 
+    @GetMapping("{id}/show")
+    public String showById(@PathVariable String id, Principal principal, Model model) {
+        User user = userService.findById(Long.valueOf(id));
 
+        log.warn(principal.getName());
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (!principal.getName().equals(user.getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+
+        model.addAttribute("user", userService.findById(Long.valueOf(id)));
+        return "profileview";
+    }
 }

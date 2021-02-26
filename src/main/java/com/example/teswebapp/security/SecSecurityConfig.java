@@ -68,9 +68,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         security
                 .authorizeRequests()
 
-                .antMatchers("/webjars/**","/css/**","/", "/index").permitAll()
+                .antMatchers("/webjars/**","/css/**","/", "/index",
+                        "/signup","/adduser","/delete/**").permitAll()
                 .antMatchers("/update/**","/edit/**","/update pwd/**","/edit pwd/**").hasAnyAuthority("USER")
-                .antMatchers("/delete/**").hasAnyAuthority("ADMIN")
+//                .antMatchers("/delete/**").hasAnyAuthority("ADMIN")
 
 //                .antMatchers("/", "/index", "/signup","/adduser",
 //                        "/login","/update/**","/edit/**","/update pwd/**","/edit pwd/**","/delete/**",
