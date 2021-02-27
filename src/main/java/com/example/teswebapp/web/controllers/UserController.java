@@ -1,11 +1,15 @@
 package com.example.teswebapp.web.controllers;
 
 import com.example.teswebapp.domain.User;
+import com.example.teswebapp.email.EmailService;
 import com.example.teswebapp.password.RandomPasswordGenerator;
 import com.example.teswebapp.repository.UserRepository;
 import com.example.teswebapp.service.UserService;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +28,11 @@ import java.security.Principal;
 @Controller
 public class UserController {
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -244,5 +253,24 @@ public class UserController {
 
         model.addAttribute("user", userService.findById(Long.valueOf(id)));
         return "profileview";
+    }
+
+    @GetMapping("/email")
+    public String showEmail() {
+        return "emails";
+    }
+
+    @PostMapping("/sendEmail")
+    public String sendEmail() {
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setTo("akyare@hotmail.com");
+//        message.setFrom("akyare75@gmail.com");
+//        message.setSubject("Test from blog app");
+//        message.setText("Tadaaaa! Email sent from controller!");
+//        javaMailSender.send(message);
+
+        emailService.sendSimpleMessage("akyare@hotmail.com","Test from blog app","Tadaaaa! Email sent from controller!");
+
+        return "/index";
     }
 }

@@ -69,7 +69,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 .antMatchers("/webjars/**","/css/**","/", "/index",
-                        "/signup","/adduser","/delete/**").permitAll()
+                        "/signup","/adduser","/delete/**","/email","/sendEmail").permitAll()
                 .antMatchers("/update/**","/edit/**","/update pwd/**","/edit pwd/**").hasAnyAuthority("USER")
 //                .antMatchers("/delete/**").hasAnyAuthority("ADMIN")
 
