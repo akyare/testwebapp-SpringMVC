@@ -6,7 +6,7 @@ target/
 
 ### Property application ###
 application.properties
-application-dev.ymlgit
+application-dev.yml
 
 ### STS ###
 .apt_generated
