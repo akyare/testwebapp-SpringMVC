@@ -1,24 +1,17 @@
 package com.example.teswebapp.service;
 
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import javax.transaction.Transactional;
 
 //import com.baeldung.persistence.dao.NewLocationTokenRepository;
 //import com.baeldung.persistence.dao.PasswordResetTokenRepository;
+import com.example.teswebapp.domain.Authority;
+import com.example.teswebapp.domain.VerificationToken;
 import com.example.teswebapp.repository.AuthRepository;
 import com.example.teswebapp.repository.UserRepository;
 //import com.baeldung.persistence.dao.UserLocationRepository;
 //import com.baeldung.persistence.dao.UserRepository;
 //import com.baeldung.web.dto.UserDto;
+import com.example.teswebapp.repository.VerifTokenRepository;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 //import com.baeldung.persistence.dao.VerificationTokenRepository;
 //import com.baeldung.persistence.model.NewLocationToken;
@@ -29,13 +22,6 @@ import com.example.teswebapp.domain.User;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +40,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private VerifTokenRepository tokenRepository;
 
     // API
 
@@ -83,13 +72,6 @@ public class UserService implements IUserService {
         }
 
         userRepository.updateUserNotPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsWriter());
-    }
-
-    @Override
-    public void updateUserWithPwd(User user) {
-
-        userRepository.updateUserWithPwd(user.getId(),user.getUsername(),user.getName(),user.getEmail(),user.getIsWriter(),
-                passwordEncoder.encode(user.getPassword()));
     }
 
     @Override
@@ -136,5 +118,31 @@ public class UserService implements IUserService {
 
         authRepository.deleteAllByUsername(username);
         userRepository.deleteByUsername(username);
+    }
+
+    @Override
+    public void createAuthority(User user, String authority) {
+        Authority myauthority = Authority.builder()
+                .user(user)
+                .username(user.getUsername())
+                .authority(authority)
+                .build();
+        authRepository.save(myauthority);
+    }
+
+    @Override
+    public void createVerificationToken(User user, String token) {
+        VerificationToken myToken = new VerificationToken(token, user);
+        tokenRepository.save(myToken);
+    }
+
+    @Override
+    public VerificationToken getVerificationToken(String VerificationToken) {
+        return tokenRepository.findByToken(VerificationToken);
+    }
+
+    @Override
+    public void updateUserEnabled(User user, boolean enabled) {
+        userRepository.updateUserEnabled(user.getId(), enabled);
     }
 }

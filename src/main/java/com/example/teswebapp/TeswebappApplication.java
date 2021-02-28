@@ -1,7 +1,10 @@
 package com.example.teswebapp;
 
+import com.example.teswebapp.domain.VerificationToken;
 import com.example.teswebapp.email.EmailService;
+import com.example.teswebapp.repository.VerifTokenRepository;
 import com.sun.xml.internal.ws.api.message.Message;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -21,11 +24,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+@Slf4j
 @SpringBootApplication
 public class TeswebappApplication {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private VerifTokenRepository verifTokenRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(TeswebappApplication.class, args);
@@ -40,6 +47,15 @@ public class TeswebappApplication {
 //    public void triggerWhenStarts() {
 //        emailService.sendSimpleMessage("akyare@hotmail.com","Hi there.","Test from blog app.");
 //    }
+
+        // test to send a simple message from the console
+    @EventListener(ApplicationReadyEvent.class)
+    public void triggerWhenStarts() {
+        String token = "d7163c6d-064f-4ec0-8ade-891df3709359";
+        VerificationToken verifToken = verifTokenRepository.findByToken(token);
+        log.warn("token from init " + verifToken.getUserId());
+
+    }
 
 
 }

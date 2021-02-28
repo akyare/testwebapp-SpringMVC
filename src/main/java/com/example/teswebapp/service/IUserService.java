@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 //import com.baeldung.web.dto.UserDto;
+import com.example.teswebapp.domain.VerificationToken;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 //import com.baeldung.persistence.model.PasswordResetToken;
 import com.example.teswebapp.domain.User;
@@ -19,8 +20,6 @@ public interface IUserService {
 
     void updateUserNotPwd(User user);
 
-    void updateUserWithPwd(User user);
-
     User findById(Long Id);
 
     User findByUsername(String username);
@@ -30,5 +29,14 @@ public interface IUserService {
     boolean checkIfValidOldPassword(User user, String oldPassword);
 
     void deleteByUsername(String username);
+
+    void createAuthority(User user, String authority);
+
+    void createVerificationToken(User user, String token);
+
+    VerificationToken getVerificationToken(String VerificationToken);
+
+    void updateUserEnabled(User user, boolean enabled);
+
 
 }

@@ -25,14 +25,19 @@ import java.util.List;
 public class User {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "username")
     @NotBlank(message = "Name is mandatory")
     private String username;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Authority> authority;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    private VerificationToken verificationToken;
 
     @NotBlank(message = "Name is mandatory")
     private String name;
@@ -57,5 +62,8 @@ public class User {
     private String oldPassword;
 
     private Boolean isWriter;
+
+    @Column(name = "enabled")
+    private boolean enabled = false;
 
 }

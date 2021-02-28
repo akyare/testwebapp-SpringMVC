@@ -25,7 +25,6 @@ public class Authority {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank(message = "Name is mandatory")
     private String username;
 
     @ManyToOne(cascade = CascadeType.MERGE)

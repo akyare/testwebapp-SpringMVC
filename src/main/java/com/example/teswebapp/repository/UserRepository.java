@@ -32,14 +32,12 @@ public interface UserRepository extends CrudRepository<User, Long> {
                      @Param(value = "writer") Boolean writer);
 
     @Modifying
-    @Query("update User u set u.username = :username, u.name = :name, u.email = :email, u.isWriter = :writer, u.encodedPassword = :password where u.id = :id")
-    void updateUserWithPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
-                    @Param(value = "name") String name, @Param(value = "email") String email,
-                    @Param(value = "writer") Boolean writer, @Param(value = "password") String password);
-
-    @Modifying
     @Query("update User u set u.encodedPassword = :password where u.id = :id")
     void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
+
+    @Modifying
+    @Query("update User u set u.enabled = :enabled where u.id = :id")
+    void updateUserEnabled(@Param(value = "id") Long id, @Param(value = "enabled") boolean enabled);
 
     @Query("select u from User u where u.email = :email and u.id <> :id")
     List<User> findByEmailNotEqualToId(@Param(value = "email") String email, @Param(value = "id") Long id);

@@ -5,9 +5,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface AuthRepository extends CrudRepository<Authority, Long> {
 
     //List<Authority> findByUsername(String username);
@@ -15,4 +17,6 @@ public interface AuthRepository extends CrudRepository<Authority, Long> {
     @Modifying
     @Query("delete from Authority a where a.username = :username")
     void deleteAllByUsername(@Param(value = "username") String username);
+
+    Authority save(Authority authority);
 }

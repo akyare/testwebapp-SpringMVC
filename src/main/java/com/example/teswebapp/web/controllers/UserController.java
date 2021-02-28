@@ -1,13 +1,17 @@
 package com.example.teswebapp.web.controllers;
 
+import com.example.teswebapp.domain.Authority;
 import com.example.teswebapp.domain.User;
+import com.example.teswebapp.domain.VerificationToken;
 import com.example.teswebapp.email.EmailService;
 import com.example.teswebapp.password.RandomPasswordGenerator;
 import com.example.teswebapp.repository.UserRepository;
+import com.example.teswebapp.service.AuthService;
 import com.example.teswebapp.service.UserService;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
@@ -18,11 +22,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Calendar;
+import java.util.UUID;
 
 @Slf4j
 @Controller
@@ -30,6 +37,9 @@ public class UserController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -95,14 +105,33 @@ public class UserController {
     }
 
     @PostMapping("/adduser")
-    public String addUser(@ModelAttribute @Valid User user, BindingResult bindingResult, Model model) {
+    public String addUser(@ModelAttribute @Valid User user, BindingResult bindingResult,
+                          HttpServletRequest request ,Model model) {
+
         if (bindingResult.hasErrors()) {
             log.debug("Error in bindingResult!!!");
             return "add-user";
         }
 
         try {
+            user.setEnabled(false);
             userService.registerNewUserAccount(user);
+            userService.createAuthority(user,"USER");
+
+            String appUrl = request.getContextPath();
+            String token = UUID.randomUUID().toString();
+            log.warn("username addUser: "+user.getUsername());
+            userService.createVerificationToken(user, token);
+
+            String recipientAddress = user.getEmail();
+            String subject = "Registration Confirmation";
+            String confirmationUrl
+                    = "http://localhost:8080" + appUrl + "/registrationConfirm?token=" + token;
+            String message = "Dear,\n\nTo activate your account, please click on the link: " + confirmationUrl +
+                    ".\n\nKind Regards,\nThe Blog Post Team";
+
+            emailService.sendSimpleMessage(recipientAddress, subject, message);
+
         } catch (UserAlreadyExistException uaeEx) {
             model.addAttribute("message", "An account for that username/email already exists.");
             return "add-user";
