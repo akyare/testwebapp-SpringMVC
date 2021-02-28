@@ -158,6 +158,8 @@ public class UserController {
 
         try {
             userService.updateUserNotPwd(user);
+            String text = "Dear,\n\nThe changes to your profile are successfully saved.\n\nKind Regards,\nThe Blog Post Team";
+            emailService.sendSimpleMessage(user.getEmail(),"Your profile has been updated", text);
         } catch (UserAlreadyExistException uaeEx) {
             model.addAttribute("message", "An account for that username/email already exists.");
             return "update-user";
