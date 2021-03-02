@@ -323,11 +323,41 @@ public class UserController {
     }
 
     @GetMapping("/resetPwdConfirm")
-    public String confirmResetPwd(@RequestParam("token") String token) {
+    public String confirmResetPwd(@RequestParam("token") String token, Model model) {
 
-        return "/forgetPassword";
+        VerificationToken verificationToken = userService.getVerificationToken(token);
+        if (verificationToken == null) {
+            return "redirect:/forbidden-page";
+        }
+
+        User user = verificationToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return "redirect:/forbidden-page";
+        }
+
+        model.addAttribute("user",user);
+
+        return "/reset-pwd";
     }
 
+    @PostMapping("/reset-pwd")
+    public String resetPwd(@Valid User user, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            log.debug("Error in bindingResult!!!");
+            return "reset-pwd";
+        }
+
+        userService.updateUserPwd(user.getId(), user.getPassword());
+
+        return "redirect:/pwd-reset-success";
+    }
+
+    @GetMapping("/pwd-reset-success")
+    public String showResetPwdSuccess() {
+        return "pwd-reset-success";
+    }
 
     @GetMapping("/email")
     public String showEmail() {
