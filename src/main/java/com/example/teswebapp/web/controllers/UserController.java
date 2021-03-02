@@ -90,10 +90,8 @@ public class UserController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
+
+        logout(request, response);
         return "redirect:/index"; //You can redirect wherever you want, but generally it's a good practice to show login screen again.
     }
 
@@ -256,7 +254,8 @@ public class UserController {
 
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") long id, Principal principal, Model model) {
+    public String deleteUser(@PathVariable("id") long id, Principal principal,HttpServletRequest request,
+                             HttpServletResponse response, Model model) {
         User user = userService.findById(id);
 
         log.warn(principal.getName());
@@ -269,7 +268,9 @@ public class UserController {
         userService.deleteByUsername(user.getUsername());
 
         // to logout after the user has deleted his own account
-        return "/logout";
+        logout(request,response);
+
+        return "redirect:/index";
     }
 
     @GetMapping("{id}/show")
@@ -304,5 +305,12 @@ public class UserController {
         emailService.sendSimpleMessage("akyare@hotmail.com","Test from blog app","Tadaaaa! Email sent from controller!");
 
         return "/index";
+    }
+
+    private void logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
     }
 }
