@@ -268,7 +268,8 @@ public class UserController {
 
         userService.deleteByUsername(user.getUsername());
 
-        return "redirect:/index";
+        // to logout after the user has deleted his own account
+        return "/logout";
     }
 
     @GetMapping("{id}/show")

@@ -49,13 +49,13 @@ public class TeswebappApplication {
 //    }
 
         // test to send a simple message from the console
-    @EventListener(ApplicationReadyEvent.class)
-    public void triggerWhenStarts() {
-        String token = "d7163c6d-064f-4ec0-8ade-891df3709359";
-        VerificationToken verifToken = verifTokenRepository.findByToken(token);
-        log.warn("token from init " + verifToken.getUserId());
-
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void triggerWhenStarts() {
+//        String token = "d7163c6d-064f-4ec0-8ade-891df3709359";
+//        VerificationToken verifToken = verifTokenRepository.findByToken(token);
+//        log.warn("token from init " + verifToken.getUserId());
+//
+//    }
 
 
 }

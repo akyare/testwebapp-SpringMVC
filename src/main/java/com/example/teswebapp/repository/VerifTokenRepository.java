@@ -16,4 +16,8 @@ public interface VerifTokenRepository extends CrudRepository<VerificationToken, 
     VerificationToken findByToken(String token);
 
     VerificationToken findByUser(User user);
+
+    @Modifying
+    @Query("delete from VerificationToken v where v.id = :id")
+    void deleteById(@Param(value = "id") Long id);
 }
