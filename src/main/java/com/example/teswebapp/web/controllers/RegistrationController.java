@@ -39,6 +39,11 @@ public class RegistrationController {
         }
 
         userService.updateUserEnabled(user, true);
+
         return "redirect:/index";
+    }
+
+    private void login() {
+
     }
 }

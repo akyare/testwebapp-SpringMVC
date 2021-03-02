@@ -125,7 +125,7 @@ public class UserController {
             String subject = "Registration Confirmation";
             String confirmationUrl
                     = "http://localhost:8080" + appUrl + "/registrationConfirm?token=" + token;
-            String message = "Dear,\n\nTo activate your account, please click on the link: " + confirmationUrl +
+            String message = "Dear,\n\nTo activate your account, please click on the following link: " + confirmationUrl +
                     ".\n\nKind Regards,\nThe Blog Post Team";
 
             emailService.sendSimpleMessage(recipientAddress, subject, message);
@@ -287,6 +287,47 @@ public class UserController {
         model.addAttribute("user", userService.findById(Long.valueOf(id)));
         return "profileview";
     }
+
+    @GetMapping("/forgetPassword")
+    public String showForgetPassword(Model model) {
+
+
+        return "/forgetPassword";
+    }
+
+    @PostMapping("/forgetPassword")
+    public String resetPassword(HttpServletRequest request, Model model) {
+
+        String userEmail = request.getParameter("email");
+        User user = userService.findByEmail(userEmail);
+
+        if(user == null) {
+            model.addAttribute("msgEmailMissing", "The email address you have entered does not exist in our database.");
+            return "/forgetPassword";
+        }
+
+        String appUrl = request.getContextPath();
+        String token = UUID.randomUUID().toString();
+        userService.createVerificationToken(user, token);
+
+        String recipientAddress = user.getEmail();
+        String subject = "Reset password link";
+        String confirmationUrl
+                = "http://localhost:8080" + appUrl + "/resetPwdConfirm?token=" + token;
+        String message = "Dear,\n\nTo reset your account, please click on the following link: " + confirmationUrl +
+                ".\n\nKind Regards,\nThe Blog Post Team";
+
+        emailService.sendSimpleMessage(recipientAddress, subject, message);
+
+        return "/email-sent";
+    }
+
+    @GetMapping("/resetPwdConfirm")
+    public String confirmResetPwd(@RequestParam("token") String token) {
+
+        return "/forgetPassword";
+    }
+
 
     @GetMapping("/email")
     public String showEmail() {

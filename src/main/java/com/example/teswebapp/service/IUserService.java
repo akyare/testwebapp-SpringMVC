@@ -22,6 +22,8 @@ public interface IUserService {
 
     User findById(Long Id);
 
+    User findByEmail(String email);
+
     User findByUsername(String username);
 
     void updateUserPwd(Long id, String password);

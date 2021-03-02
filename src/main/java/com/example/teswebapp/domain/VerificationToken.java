@@ -28,7 +28,7 @@ public class VerificationToken {
 
     private String token;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", insertable=false, updatable=false)
     private User user;
 

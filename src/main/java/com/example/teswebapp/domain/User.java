@@ -36,8 +36,8 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Authority> authority;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private VerificationToken verificationToken;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<VerificationToken> verificationToken;
 
     @NotBlank(message = "Name is mandatory")
     private String name;
