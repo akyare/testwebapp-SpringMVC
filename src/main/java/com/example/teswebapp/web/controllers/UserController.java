@@ -67,18 +67,34 @@ public class UserController {
         // Add all null check and authentication check before using. Because this is global
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        log.warn("the autority: " + authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().contains("USER")));
+
         User user = userService.findByUsername(authentication.getName());
 
         String msgUsername = "visitor";
         String idUser = "";
+        boolean isAdmin = false;
+        boolean isWriter = false;
+        boolean isRegistered = false;
         if (user != null) {
             log.warn("from showUserList username: " + user.getUsername());
             msgUsername = user.getUsername();
             idUser = user.getId().toString();
+            isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
+            isWriter = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
+            isRegistered = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("USER"));
         }
+        log.warn("isRegistered: " + isRegistered);
 
         model.addAttribute("msgUsername", msgUsername);
         model.addAttribute("idUser", idUser);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("isWriter", isWriter);
+        model.addAttribute("isRegistered", isRegistered);
 
         //model.addAttribute("loggedinuser", authentication.getName());
         model.addAttribute("roles", authentication.getAuthorities());
@@ -114,7 +130,12 @@ public class UserController {
         try {
             user.setEnabled(false);
             userService.registerNewUserAccount(user);
-            userService.createAuthority(user,"USER");
+
+            if(user.getIsWriter()) {
+                userService.createAuthority(user,"WRITER");
+            } else {
+                userService.createAuthority(user,"USER");
+            }
 
             String appUrl = request.getContextPath();
             String token = UUID.randomUUID().toString();
