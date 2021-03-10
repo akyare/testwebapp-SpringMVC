@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 //import com.maxmind.geoip2.DatabaseReader;
 
 @Slf4j
@@ -123,6 +125,11 @@ public class UserService implements IUserService {
 
         authRepository.deleteAllByUsername(username);
         userRepository.deleteByUsername(username);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Override

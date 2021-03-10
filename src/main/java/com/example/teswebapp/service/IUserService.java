@@ -26,6 +26,8 @@ public interface IUserService {
 
     User findByUsername(String username);
 
+    List<User> findAll();
+
     void updateUserPwd(Long id, String password);
 
     boolean checkIfValidOldPassword(User user, String oldPassword);

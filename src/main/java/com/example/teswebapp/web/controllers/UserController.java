@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -64,8 +65,12 @@ public class UserController {
 
     @GetMapping({"/", "/index"})
     public String showUserList(Model model) {
+
+
+        userContext(model);
+
         // Add all null check and authentication check before using. Because this is global
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.warn("the autority: " + authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().contains("USER")));
@@ -99,9 +104,50 @@ public class UserController {
         //model.addAttribute("loggedinuser", authentication.getName());
         model.addAttribute("roles", authentication.getAuthorities());
 
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("users", userRepository.findAll());*/
 
         return "index";
+    }
+
+    @GetMapping("/about")
+    public String showAbout(Model model) {
+
+        userContext(model);
+
+        return "/about";
+    }
+
+    @GetMapping("/admin")
+    public String showAdmin(Model model) {
+
+        userContext(model);
+
+        List<User> users = userService.findAll();
+        model.addAttribute("users", users);
+
+        return "/admin";
+    }
+
+    @GetMapping("/writer")
+    public String showWriter(Model model) {
+
+        userContext(model);
+
+        return "/writer";
+    }
+
+    @GetMapping("/ban/{id}")
+    public String banMember(@PathVariable String id) {
+
+        User user = userService.findById(Long.valueOf(id));
+
+        if(user.isEnabled()) {
+            userService.updateUserEnabled(user, false);
+        } else {
+            userService.updateUserEnabled(user, true);
+        }
+
+        return "redirect:/admin";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -404,5 +450,34 @@ public class UserController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
+    }
+
+    private void userContext(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedinuser = "visitor";
+        String idUser = "";
+        boolean isAdmin = false;
+        boolean isWriter = false;
+        boolean isRegistered = false;
+
+        User user = userService.findByUsername(authentication.getName());
+
+        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
+            loggedinuser = authentication.getName();
+            idUser = user.getId().toString();
+            isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
+            isWriter = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
+            isRegistered = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("USER"));
+        }
+
+        model.addAttribute("msgUsername", loggedinuser);
+        model.addAttribute("idUser", idUser);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("isWriter", isWriter);
+        model.addAttribute("isRegistered", isRegistered);
     }
 }
