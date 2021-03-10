@@ -11,6 +11,7 @@ import com.example.teswebapp.service.UserService;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -66,45 +67,7 @@ public class UserController {
     @GetMapping({"/", "/index"})
     public String showUserList(Model model) {
 
-
         userContext(model);
-
-        // Add all null check and authentication check before using. Because this is global
-        /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        log.warn("the autority: " + authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().contains("USER")));
-
-        User user = userService.findByUsername(authentication.getName());
-
-        String msgUsername = "visitor";
-        String idUser = "";
-        boolean isAdmin = false;
-        boolean isWriter = false;
-        boolean isRegistered = false;
-        if (user != null) {
-            log.warn("from showUserList username: " + user.getUsername());
-            msgUsername = user.getUsername();
-            idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
-            isWriter = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
-            isRegistered = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("USER"));
-        }
-        log.warn("isRegistered: " + isRegistered);
-
-        model.addAttribute("msgUsername", msgUsername);
-        model.addAttribute("idUser", idUser);
-        model.addAttribute("isAdmin", isAdmin);
-        model.addAttribute("isWriter", isWriter);
-        model.addAttribute("isRegistered", isRegistered);
-
-        //model.addAttribute("loggedinuser", authentication.getName());
-        model.addAttribute("roles", authentication.getAuthorities());
-
-        model.addAttribute("users", userRepository.findAll());*/
 
         return "index";
     }
@@ -120,9 +83,23 @@ public class UserController {
     @GetMapping("/admin")
     public String showAdmin(Model model) {
 
+        return listByPage(model, 1);
+    }
+
+    @RequestMapping("/page/{pageNumber}")
+    public String listByPage(Model model,
+                           @PathVariable(name = "pageNumber") int currentPage) {
+
         userContext(model);
 
-        List<User> users = userService.findAll();
+        Page<User> page = userService.listAll(currentPage);
+        long totalItems = page.getTotalElements();
+        int totalPages = page.getTotalPages();
+        List<User> users = page.getContent();
+
+        model.addAttribute("currentPage",currentPage);
+        model.addAttribute("totalItems",totalItems);
+        model.addAttribute("totalPages",totalPages);
         model.addAttribute("users", users);
 
         return "/admin";

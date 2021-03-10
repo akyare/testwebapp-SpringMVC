@@ -9,12 +9,14 @@ import com.example.teswebapp.domain.VerificationToken;
 import com.example.teswebapp.web.error.UserAlreadyExistException;
 //import com.baeldung.persistence.model.PasswordResetToken;
 import com.example.teswebapp.domain.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 //import com.baeldung.persistence.model.VerificationToken;
 //import com.baeldung.persistence.model.NewLocationToken;
 
 public interface IUserService {
 
+    Page<User> listAll(int pageNumber);
 
     User registerNewUserAccount(User account) throws UserAlreadyExistException;
 

@@ -22,6 +22,10 @@ import com.example.teswebapp.domain.User;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +51,14 @@ public class UserService implements IUserService {
     private VerifTokenRepository tokenRepository;
 
     // API
+
+    @Override
+    public Page<User> listAll(int pageNumber) {
+        Sort sort = Sort.by("username").ascending();
+
+        Pageable pageable = PageRequest.of(pageNumber - 1 ,5, sort);
+        return userRepository.findAll(pageable);
+    }
 
     @Override
     public User registerNewUserAccount(final User user) {
