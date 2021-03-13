@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import javax.mail.MessagingException;
@@ -46,6 +47,9 @@ public class TeswebappApplication {
     @Autowired
     private AuthRepository authRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public static void main(String[] args) {
         SpringApplication.run(TeswebappApplication.class, args);
 
@@ -63,7 +67,10 @@ public class TeswebappApplication {
 //         test to send a simple message from the console
     @EventListener(ApplicationReadyEvent.class)
     public void triggerWhenStarts() {
-        User user = User.builder().username("ab4").build();
+
+        User user = User.builder()
+                .username("ab2")
+                .encodedPassword(passwordEncoder.encode("!nXkTT7C4#DNiU")).build();
 
         List<User> users = new ArrayList<>();
         users.add(user);
