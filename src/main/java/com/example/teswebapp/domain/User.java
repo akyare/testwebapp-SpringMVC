@@ -20,7 +20,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@PasswordMatches
+//@PasswordMatches
 @DynamicUpdate
 public class User {
 
@@ -33,17 +33,21 @@ public class User {
     @NotBlank(message = "Name is mandatory")
     private String username;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Authority> authority;
+//    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+//    private List<Authority> authority;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "username", insertable=false, updatable=false)
+    private Authority authority;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<VerificationToken> verificationToken;
 
-    @NotBlank(message = "Name is mandatory")
+    //@NotBlank(message = "Name is mandatory")
     private String name;
 
-    @NotBlank(message = "Email is mandatory")
-    @Email(message = "Email should be valid")
+    //@NotBlank(message = "Email is mandatory")
+    //@Email(message = "Email should be valid")
     private String email;
 
     //@ValidPassword
@@ -53,8 +57,8 @@ public class User {
     @Column(name = "password")
     private String encodedPassword;
 
-    @NotNull
-    @Size(min = 1)
+   // @NotNull
+    //@Size(min = 1)
     @Transient
     private String confirmPassword;
 

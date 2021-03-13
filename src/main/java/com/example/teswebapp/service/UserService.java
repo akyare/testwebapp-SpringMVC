@@ -147,7 +147,7 @@ public class UserService implements IUserService {
     @Override
     public void createAuthority(User user, String authority) {
         Authority myauthority = Authority.builder()
-                .user(user)
+//                .user(user)
                 .username(user.getUsername())
                 .authority(authority)
                 .build();

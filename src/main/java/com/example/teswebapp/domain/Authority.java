@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 
 //Spring security needs a table authorities with properties: username, authority
@@ -27,9 +28,12 @@ public class Authority {
 
     private String username;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "username", insertable=false, updatable=false)
-    private User user;
+//    @ManyToOne(cascade = CascadeType.MERGE)
+//    @JoinColumn(name = "username", insertable=false, updatable=false)
+//    private User user;
+
+    @OneToMany(mappedBy = "authority")
+    private List<User> users;
 
     @NotBlank(message = "Authority is mandatory")
     private String authority;
