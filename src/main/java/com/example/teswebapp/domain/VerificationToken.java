@@ -23,13 +23,13 @@ public class VerificationToken {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+//    @Column(name = "user_id")
+//    private Long userId;
 
     private String token;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", insertable=false, updatable=false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Date expiryDate;
@@ -48,7 +48,7 @@ public class VerificationToken {
 
         this.token = token;
         this.user = user;
-        this.userId = user.getId();
+  //      this.userId = user.getId();
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 

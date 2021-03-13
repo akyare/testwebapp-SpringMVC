@@ -63,17 +63,30 @@ public class TeswebappApplication {
 //         test to send a simple message from the console
     @EventListener(ApplicationReadyEvent.class)
     public void triggerWhenStarts() {
-//        List<Authority> authorities = new ArrayList<>();
-//        authorities.add(Authority.builder().authority("WRITER").build());
-//
-//        User user = User.builder().username("ab2").authority(authorities).build();
-//        userRepository.save(user);
+        User user = User.builder().username("ab4").build();
 
-        User user = userRepository.findByUsername("ab2");
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(Authority.builder().authority("WRITER").users(users).build());
 
-        log.warn("user from init " + user.getAuthority());
+        List<VerificationToken> tokens = new ArrayList<>();
+        VerificationToken verificationToken = new VerificationToken("125",user);
+        tokens.add(verificationToken);
+
+        user.setAuthority(authorities);
+        user.setVerificationToken(tokens);
+
+
+        User user1 = userRepository.save(user);
+
+//        User user1 = userRepository.findByUsername("ab2");
+
+        log.warn("user from init " + user1.getVerificationToken());
 
     }
+
+
 
 
 }
