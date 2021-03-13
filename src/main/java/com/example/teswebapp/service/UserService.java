@@ -29,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //import com.maxmind.geoip2.DatabaseReader;
@@ -146,8 +147,10 @@ public class UserService implements IUserService {
 
     @Override
     public void createAuthority(User user, String authority) {
+        List<User> users = new ArrayList<>();
+        users.add(user);
         Authority myauthority = Authority.builder()
-                .user(user)
+                .users(users)
                 .username(user.getUsername())
                 .authority(authority)
                 .build();

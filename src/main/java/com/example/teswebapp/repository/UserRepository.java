@@ -16,6 +16,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    User save(User user);
+
     void deleteByUsername(String Username);
 
     List<User> findAll();

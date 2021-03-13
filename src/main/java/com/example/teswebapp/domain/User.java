@@ -4,6 +4,8 @@ import com.example.teswebapp.validation.PasswordMatches;
 import com.example.teswebapp.validation.ValidPassword;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -20,7 +22,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@PasswordMatches
+//@PasswordMatches
 @DynamicUpdate
 public class User {
 
@@ -33,17 +35,26 @@ public class User {
     @NotBlank(message = "Name is mandatory")
     private String username;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user",cascade = CascadeType.ALL)
+//    private List<Authority> authority;
+
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SELECT)
+    @JoinTable(
+            name="user_authority",
+            joinColumns = {@JoinColumn(name="USER_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name="AUTH_ID", referencedColumnName = "ID")}
+    )
     private List<Authority> authority;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<VerificationToken> verificationToken;
 
-    @NotBlank(message = "Name is mandatory")
+    //@NotBlank(message = "Name is mandatory")
     private String name;
 
-    @NotBlank(message = "Email is mandatory")
-    @Email(message = "Email should be valid")
+    //@NotBlank(message = "Email is mandatory")
+    //@Email(message = "Email should be valid")
     private String email;
 
     //@ValidPassword
@@ -53,7 +64,7 @@ public class User {
     @Column(name = "password")
     private String encodedPassword;
 
-    @NotNull
+    //@NotNull
     @Size(min = 1)
     @Transient
     private String confirmPassword;
@@ -66,4 +77,19 @@ public class User {
     @Column(name = "enabled")
     private boolean enabled = false;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", encodedPassword='" + encodedPassword + '\'' +
+                ", confirmPassword='" + confirmPassword + '\'' +
+                ", oldPassword='" + oldPassword + '\'' +
+                ", isWriter=" + isWriter +
+                ", enabled=" + enabled +
+                '}';
+    }
 }

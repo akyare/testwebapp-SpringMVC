@@ -6,9 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 
 //Spring security needs a table authorities with properties: username, authority
@@ -27,9 +30,13 @@ public class Authority {
 
     private String username;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "username", insertable=false, updatable=false)
-    private User user;
+//    @ManyToOne(cascade = CascadeType.MERGE)
+//    @JoinColumn(name = "username", insertable=false, updatable=false)
+//    private User user;
+
+    @ManyToMany(fetch = FetchType.EAGER,mappedBy = "authority")
+    @Fetch(FetchMode.SELECT)
+    private List<User> users;
 
     @NotBlank(message = "Authority is mandatory")
     private String authority;
