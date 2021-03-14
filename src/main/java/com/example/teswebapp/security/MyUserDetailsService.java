@@ -1,6 +1,6 @@
-package com.example.teswebapp.service;
+package com.example.teswebapp.security;
 
-import com.example.teswebapp.domain.MyUserDetails;
+import com.example.teswebapp.security.MyUserDetails;
 import com.example.teswebapp.domain.User;
 import com.example.teswebapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

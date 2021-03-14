@@ -1,5 +1,6 @@
-package com.example.teswebapp.domain;
+package com.example.teswebapp.security;
 
+import com.example.teswebapp.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

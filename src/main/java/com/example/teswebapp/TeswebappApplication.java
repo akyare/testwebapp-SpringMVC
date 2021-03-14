@@ -68,8 +68,20 @@ public class TeswebappApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void triggerWhenStarts() {
 
+//        addUser("ab2");
+
+//        deleteUser("ab1");
+
+    }
+
+    private void deleteUser(String username) {
+        User user = userRepository.findByUsername(username);
+        userRepository.delete(user);
+    }
+
+    private void addUser(String username) {
         User user = User.builder()
-                .username("ab2")
+                .username(username)
                 .encodedPassword(passwordEncoder.encode("!nXkTT7C4#DNiU")).build();
 
         List<User> users = new ArrayList<>();
@@ -84,16 +96,10 @@ public class TeswebappApplication {
         user.setAuthority(authorities);
         user.setVerificationToken(tokens);
 
-
         User user1 = userRepository.save(user);
 
-//        User user1 = userRepository.findByUsername("ab2");
-
         log.warn("user from init " + user1.getVerificationToken());
-
     }
-
-
 
 
 }
